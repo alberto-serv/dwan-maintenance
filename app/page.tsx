@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Star } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -45,27 +45,43 @@ export default function Home() {
                 Bay Area Commercial Elevator Maintenance
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
-                Protect Your Elevators. <br />
-                Control Your Budget. <br />
-                Stop the Surprises.
+                Elevator Maintenance<br />
+                That Actually Works.<br />
+                Zero Downtime Drama.
               </h1>
               <p className="text-xl text-gray-300 mb-10 leading-relaxed font-light max-w-2xl">
                 Structured maintenance plans for Bay Area buildings — designed to prevent violations, eliminate unplanned downtime, and turn unpredictable repair costs into a fixed line item.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-8 h-14 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors flex items-center justify-center gap-2">
-                  See Plan Options <ArrowRight className="w-5 h-5" />
-                </Button>
-                <Button onClick={navigateToForm} variant="outline" size="lg" className="text-lg font-bold px-8 h-14 border-white text-white hover:bg-white/10 transition-colors">
-                  Get a Free Proposal
+                <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-8 h-14 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
+                  See Plan Options
                 </Button>
               </div>
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-400 font-medium">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-400 font-medium mb-8">
                 <span>85% of failures are preventable</span>
                 <span className="opacity-50">·</span>
                 <span>2hr avg. response</span>
                 <span className="opacity-50">·</span>
                 <span>98% inspection pass rate</span>
+              </div>
+              {/* Social Validation */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl">
+                <div className="flex -space-x-3 flex-shrink-0">
+                  {["M", "R", "J", "T"].map((initial, idx) => (
+                    <div key={idx} className="w-10 h-10 rounded-full bg-[#EFBF04] border-2 border-black flex items-center justify-center text-black font-bold text-sm">
+                      {initial}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1 mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-[#EFBF04] text-[#EFBF04]" />
+                    ))}
+                    <span className="text-white text-sm font-semibold ml-2">4.9/5</span>
+                  </div>
+                  <p className="text-gray-400 text-sm">Trusted by 200+ Bay Area property managers</p>
+                </div>
               </div>
             </div>
 
@@ -202,8 +218,8 @@ export default function Home() {
                 ))}
               </ul>
 
-              <Button onClick={() => selectPlan("Full Coverage")} className="w-full h-14 text-lg font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] flex justify-center items-center gap-2">
-                Select Full Coverage <ArrowRight className="w-5 h-5" />
+              <Button onClick={() => selectPlan("Full Coverage")} className="w-full h-14 text-lg font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03]">
+                Select Full Coverage
               </Button>
             </div>
           </div>
@@ -244,6 +260,52 @@ export default function Home() {
             <p className="text-xl text-gray-300 font-light leading-relaxed">
               The question isn't whether issues will arise — it's whether your building has a documented, structured maintenance program that reduces risk and protects you when they do.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* REVIEWS SECTION */}
+      <section className="py-24 bg-gray-50 border-t border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">What Our Clients Say</h2>
+            <h3 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Trusted by Property Managers Across the Bay Area</h3>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                quote: "We switched from a national provider and the difference was night and day. Response times dropped from 6 hours to under 2, and we haven't failed a single inspection since.",
+                name: "Maria C.",
+                role: "Property Manager, SF Financial District",
+                rating: 5,
+              },
+              {
+                quote: "Dwan's Full Coverage plan eliminated our surprise repair bills entirely. We used to budget $30K a year for emergencies — now it's a predictable monthly line item.",
+                name: "Robert T.",
+                role: "Building Owner, Oakland",
+                rating: 5,
+              },
+              {
+                quote: "The transition was seamless. They handled all the documentation, coordinated with our previous vendor, and had techs on-site within the first week. Zero downtime.",
+                name: "James W.",
+                role: "Facilities Director, San Jose",
+                rating: 5,
+              },
+            ].map((review, idx) => (
+              <div key={idx} className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 flex flex-col">
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-[#EFBF04] text-[#EFBF04]" />
+                  ))}
+                </div>
+                <p className="text-gray-700 leading-relaxed mb-6 flex-grow">"{review.quote}"</p>
+                <div>
+                  <p className="font-bold text-gray-900">{review.name}</p>
+                  <p className="text-sm text-gray-500">{review.role}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -297,8 +359,8 @@ export default function Home() {
               <p className="text-lg font-medium mb-8 leading-relaxed">
                 We handle the full transition — including documentation transfers, inspection records, and service scheduling — so your building experiences zero service gap. No awkward overlap. No uncovered periods.
               </p>
-              <Button onClick={scrollToPlans} className="self-start h-14 px-8 text-lg font-bold bg-black text-white hover:bg-gray-800 flex items-center gap-2">
-                Choose a Plan <ArrowRight className="w-5 h-5" />
+              <Button onClick={scrollToPlans} className="self-start h-14 px-8 text-lg font-bold bg-black text-white hover:bg-gray-800">
+                Choose a Plan
               </Button>
               <p className="text-sm font-bold mt-6 text-black/70 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-black" /> Free transition assessment included.
