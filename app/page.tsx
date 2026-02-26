@@ -7,7 +7,6 @@ import { CheckCircle2, AlertTriangle, Star } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
-  const navigateToForm = () => router.push("/customer-info");
 
   const scrollToPlans = () => {
     const el = document.getElementById("plans");
@@ -22,9 +21,9 @@ export default function Home() {
     <div className="min-h-screen bg-white font-sans text-gray-900">
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <div className="font-bold text-xl tracking-tight">Dwan Elevators</div>
-        </div>
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Image src="/images/logo.webp" alt="Dwan Elevator Co." width={48} height={48} className="w-auto h-10" />
+        </button>
         <Button onClick={scrollToPlans} variant="default" className="bg-[#EFBF04] text-black hover:bg-[#d4aa03] font-bold">
           View Plans
         </Button>
@@ -44,10 +43,10 @@ export default function Home() {
               <div className="inline-block bg-[#EFBF04]/20 border border-[#EFBF04]/50 text-[#EFBF04] px-4 py-1.5 rounded-full text-sm font-semibold mb-6 uppercase tracking-wider">
                 Bay Area Commercial Elevator Maintenance
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
-                Elevator Maintenance<br />
-                That Actually Works.<br />
-                Zero Downtime Drama.
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
+                Elevator Maintenance That<br />
+                Actually Works. Zero<br />
+                Downtime Drama.
               </h1>
               <p className="text-xl text-gray-300 mb-10 leading-relaxed font-light max-w-2xl">
                 Structured maintenance plans for Bay Area buildings — designed to prevent violations, eliminate unplanned downtime, and turn unpredictable repair costs into a fixed line item.
@@ -417,12 +416,9 @@ export default function Home() {
               Protect your elevators before a minor issue becomes a major emergency. Choosing a plan takes two minutes and costs nothing to get started.
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
+            <div className="flex justify-center">
               <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-10 h-16 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
                 Choose Your Plan
-              </Button>
-              <Button onClick={navigateToForm} size="lg" variant="outline" className="text-lg font-bold px-10 h-16 border-white text-white hover:bg-white/10 transition-colors">
-                Book a Building Assessment
               </Button>
             </div>
           </div>

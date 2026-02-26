@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Phone, ArrowRight } from "lucide-react";
+import { Phone } from "lucide-react";
 
 export default function Confirmation() {
   const router = useRouter();
@@ -39,9 +39,6 @@ export default function Confirmation() {
         <div className="max-w-3xl mx-auto">
           {/* Success Header */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-[#EFBF04] rounded-full mb-6">
-              <span className="text-4xl font-heading font-bold text-black">!</span>
-            </div>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">
               Order Received
             </h1>

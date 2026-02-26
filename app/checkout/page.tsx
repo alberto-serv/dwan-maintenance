@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Shield, Clock, CreditCard, CheckCircle2 } from "lucide-react";
+import { Phone, Shield, CreditCard, CheckCircle2 } from "lucide-react";
 
 const planDetails: Record<string, { name: string; price: string; annual: string; desc: string }> = {
   "Standard Protection": {
@@ -57,7 +57,6 @@ function CheckoutContent() {
     cardNumber: "",
     cardExpiry: "",
     cardCvc: "",
-    cardName: "",
   });
 
   const handleChange = (field: string, value: string) => {
@@ -320,17 +319,6 @@ function CheckoutContent() {
                     <p className="text-sm text-gray-500 mt-3 mb-6">Your card will not be charged until your service agreement is finalized.</p>
                     <div className="space-y-6">
                       <div>
-                        <label htmlFor="cardName" className="block text-sm font-semibold mb-2">Name on Card *</label>
-                        <Input
-                          id="cardName"
-                          required
-                          value={formData.cardName}
-                          onChange={(e) => handleChange("cardName", e.target.value)}
-                          placeholder="John Smith"
-                        />
-                      </div>
-
-                      <div>
                         <label htmlFor="cardNumber" className="block text-sm font-semibold mb-2">Card Number *</label>
                         <Input
                           id="cardNumber"
@@ -422,20 +410,11 @@ function CheckoutContent() {
               </div>
 
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-[#EFBF04] flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-semibold">Licensed & Insured</p>
-                      <p className="text-xs text-gray-500">CA License #140423 (C-11)</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-[#EFBF04] flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-semibold">2-Hour Emergency Response</p>
-                      <p className="text-xs text-gray-500">Bay Area average</p>
-                    </div>
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-[#EFBF04] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold">Licensed & Insured</p>
+                    <p className="text-xs text-gray-500">CA License #140423 (C-11)</p>
                   </div>
                 </div>
               </div>
