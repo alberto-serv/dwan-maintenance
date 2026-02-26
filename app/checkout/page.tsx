@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Shield, Clock, CreditCard, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Phone, Shield, Clock, CreditCard, CheckCircle2 } from "lucide-react";
 
 const planDetails: Record<string, { name: string; price: string; annual: string; desc: string }> = {
   "Standard Protection": {
@@ -101,10 +101,9 @@ function CheckoutContent() {
           {/* Back link */}
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 font-medium transition-colors"
+            className="text-gray-600 hover:text-gray-900 mb-8 font-medium transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Plans
+            &larr; Back to Plans
           </button>
 
           <div className="grid lg:grid-cols-3 gap-12">
@@ -253,10 +252,9 @@ function CheckoutContent() {
                         </div>
 
                         <div>
-                          <label htmlFor="manufacturer" className="block text-sm font-semibold mb-2">Manufacturer *</label>
+                          <label htmlFor="manufacturer" className="block text-sm font-semibold mb-2">Manufacturer</label>
                           <Input
                             id="manufacturer"
-                            required
                             value={formData.manufacturer}
                             onChange={(e) => handleChange("manufacturer", e.target.value)}
                             placeholder="e.g. Otis, ThyssenKrupp, KONE"
@@ -266,10 +264,9 @@ function CheckoutContent() {
 
                       <div className="grid md:grid-cols-3 gap-6">
                         <div>
-                          <label htmlFor="yearInstalled" className="block text-sm font-semibold mb-2">Year Installed *</label>
+                          <label htmlFor="yearInstalled" className="block text-sm font-semibold mb-2">Year Installed</label>
                           <Input
                             id="yearInstalled"
-                            required
                             value={formData.yearInstalled}
                             onChange={(e) => handleChange("yearInstalled", e.target.value)}
                             placeholder="e.g. 2005"
@@ -278,7 +275,7 @@ function CheckoutContent() {
                         </div>
 
                         <div>
-                          <label htmlFor="elevatorType" className="block text-sm font-semibold mb-2">Type *</label>
+                          <label htmlFor="elevatorType" className="block text-sm font-semibold mb-2">Type</label>
                           <Select value={formData.elevatorType} onValueChange={(value) => handleChange("elevatorType", value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select type" />
@@ -291,7 +288,7 @@ function CheckoutContent() {
                         </div>
 
                         <div>
-                          <label htmlFor="numberOfStops" className="block text-sm font-semibold mb-2">Number of Stops *</label>
+                          <label htmlFor="numberOfStops" className="block text-sm font-semibold mb-2">Number of Stops</label>
                           <Select value={formData.numberOfStops} onValueChange={(value) => handleChange("numberOfStops", value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select" />
