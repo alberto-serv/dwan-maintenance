@@ -23,13 +23,15 @@ export default function Confirmation() {
       <header className="bg-black text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
-            <Image
-              src="/images/logo.webp"
-              alt="Dwan Elevator Co."
-              width={80}
-              height={80}
-              className="w-auto h-16"
-            />
+            <button onClick={() => router.push("/")} className="hover:opacity-80 transition-opacity">
+              <Image
+                src="/images/logo.webp"
+                alt="Dwan Elevator Co."
+                width={80}
+                height={80}
+                className="w-auto h-16"
+              />
+            </button>
           </div>
         </div>
       </header>
