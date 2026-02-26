@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Phone } from "lucide-react";
+import { Phone, ArrowRight } from "lucide-react";
 
 export default function Confirmation() {
   const router = useRouter();
-  const [customerData, setCustomerData] = useState<any>(null);
+  const [orderData, setOrderData] = useState<any>(null);
 
   useEffect(() => {
-    const data = sessionStorage.getItem("customerInfo");
+    const data = sessionStorage.getItem("checkoutData");
     if (data) {
-      setCustomerData(JSON.parse(data));
+      setOrderData(JSON.parse(data));
     }
   }, []);
 
@@ -36,23 +36,111 @@ export default function Confirmation() {
 
       {/* Confirmation Content */}
       <div className="container mx-auto px-4 py-16">
-        <div className="max-w-2xl mx-auto">
-          {/* Success Icon */}
-          <div className="text-center mb-8">
+        <div className="max-w-3xl mx-auto">
+          {/* Success Header */}
+          <div className="text-center mb-10">
             <div className="inline-flex items-center justify-center w-24 h-24 bg-[#EFBF04] rounded-full mb-6">
-              <CheckCircle2 className="w-12 h-12 text-black" />
+              <span className="text-4xl font-heading font-bold text-black">!</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">
-              Thank You!
+              Order Received
             </h1>
-            <p className="text-xl text-gray-600">
-              We've received your request for a free maintenance assessment.
+            <p className="text-xl text-gray-600 max-w-xl mx-auto">
+              Thank you for choosing Dwan Elevator. Your {orderData?.plan || "maintenance"} plan request has been submitted.
             </p>
           </div>
 
-          {/* Confirmation Details */}
+          {/* Order Summary */}
+          {orderData && (
+            <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+              <h2 className="text-2xl font-heading font-bold mb-6 pb-4 border-b-2 border-[#EFBF04]">
+                Order Summary
+              </h2>
+
+              {/* Plan */}
+              <div className="mb-8 bg-gray-50 rounded-lg p-6 border border-gray-100">
+                <p className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-1">Selected Plan</p>
+                <p className="text-2xl font-heading font-bold text-gray-900">{orderData.plan}</p>
+              </div>
+
+              {/* Customer Info */}
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Customer Information</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Name</span>
+                    <p className="font-semibold text-gray-900">{orderData.name}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Email</span>
+                    <p className="font-semibold text-gray-900">{orderData.email}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Phone</span>
+                    <p className="font-semibold text-gray-900">{orderData.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Property Info */}
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Property Information</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div className="md:col-span-2">
+                    <span className="text-gray-500">Address</span>
+                    <p className="font-semibold text-gray-900">
+                      {orderData.propertyAddress}
+                      {orderData.propertyAddress2 && <><br />{orderData.propertyAddress2}</>}
+                      <br />
+                      {orderData.propertyCity}, {orderData.propertyState} {orderData.propertyZip}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Elevator Info */}
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Elevator Details</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Number of Elevators</span>
+                    <p className="font-semibold text-gray-900">{orderData.elevatorCount}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Manufacturer</span>
+                    <p className="font-semibold text-gray-900">{orderData.manufacturer}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Year Installed</span>
+                    <p className="font-semibold text-gray-900">{orderData.yearInstalled}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Type</span>
+                    <p className="font-semibold text-gray-900">{orderData.elevatorType}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Number of Stops</span>
+                    <p className="font-semibold text-gray-900">{orderData.numberOfStops}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Payment</h3>
+                <div className="text-sm">
+                  <span className="text-gray-500">Card on File</span>
+                  <p className="font-semibold text-gray-900">
+                    •••• •••• •••• {orderData.cardNumber?.slice(-4) || "****"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Next Steps */}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <h2 className="text-2xl font-heading font-bold mb-6 pb-4 border-b">
+            <h2 className="text-2xl font-heading font-bold mb-6 pb-4 border-b-2 border-[#EFBF04]">
               What Happens Next
             </h2>
 
@@ -62,8 +150,8 @@ export default function Confirmation() {
                   1
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">We'll Review Your Information</h3>
-                  <p className="text-gray-600">Our team will assess your elevator maintenance needs based on the information you provided.</p>
+                  <h3 className="font-semibold mb-1">Order Confirmation</h3>
+                  <p className="text-gray-600">You'll receive an email confirmation with your order details shortly.</p>
                 </div>
               </div>
 
@@ -72,8 +160,8 @@ export default function Confirmation() {
                   2
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">We'll Contact You Within 24 Hours</h3>
-                  <p className="text-gray-600">A Dwan Elevator specialist will reach out to schedule your free on-site assessment.</p>
+                  <h3 className="font-semibold mb-1">Specialist Contact Within 24 Hours</h3>
+                  <p className="text-gray-600">A Dwan Elevator specialist will call to review your elevator details and schedule your first service visit.</p>
                 </div>
               </div>
 
@@ -82,8 +170,8 @@ export default function Confirmation() {
                   3
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Free On-Site Assessment</h3>
-                  <p className="text-gray-600">Our technician will inspect your elevators and provide a comprehensive maintenance plan.</p>
+                  <h3 className="font-semibold mb-1">Initial On-Site Inspection</h3>
+                  <p className="text-gray-600">Our certified technician will perform a comprehensive inspection of your elevator equipment and document current conditions.</p>
                 </div>
               </div>
 
@@ -92,46 +180,12 @@ export default function Confirmation() {
                   4
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Start Your Free Year</h3>
-                  <p className="text-gray-600">Once approved, your first 12 months of full-service maintenance is completely free.</p>
+                  <h3 className="font-semibold mb-1">Service Begins</h3>
+                  <p className="text-gray-600">Your maintenance plan activates immediately. Your first invoice is Net-30 — no upfront payment required.</p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Customer Info Summary */}
-          {customerData && (
-            <div className="bg-gray-100 rounded-lg p-6 mb-8">
-              <h3 className="font-semibold mb-4">Your Information</h3>
-              <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-600">Name:</span>
-                  <p className="font-semibold">{customerData.name}</p>
-                </div>
-                <div>
-                  <span className="text-gray-600">Company:</span>
-                  <p className="font-semibold">{customerData.company}</p>
-                </div>
-                <div>
-                  <span className="text-gray-600">Email:</span>
-                  <p className="font-semibold">{customerData.email}</p>
-                </div>
-                <div>
-                  <span className="text-gray-600">Phone:</span>
-                  <p className="font-semibold">{customerData.phone}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <span className="text-gray-600">Building Address:</span>
-                  <p className="font-semibold">
-                    {customerData.addressLine1}
-                    {customerData.addressLine2 && <><br />{customerData.addressLine2}</>}
-                    <br />
-                    {customerData.city}, {customerData.state} {customerData.zip}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Contact Info */}
           <div className="bg-black text-white rounded-lg p-8 text-center">
@@ -169,7 +223,9 @@ export default function Confirmation() {
       {/* Footer */}
       <footer className="bg-black text-white py-8 mt-16">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">© 2026 Dwan Elevator Company</p>
+          <p className="font-bold text-sm tracking-[0.15em] mb-1">DWAN ELEVATOR CO.</p>
+          <p className="text-xs text-gray-500 mb-4">Serving California Since 1919</p>
+          <p className="text-xs text-gray-600">© 2026 Dwan Elevator Company</p>
         </div>
       </footer>
     </div>

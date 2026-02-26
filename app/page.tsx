@@ -9,15 +9,24 @@ export default function Home() {
   const router = useRouter();
   const navigateToForm = () => router.push("/customer-info");
 
+  const scrollToPlans = () => {
+    const el = document.getElementById("plans");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const selectPlan = (plan: string) => {
+    router.push(`/checkout?plan=${encodeURIComponent(plan)}`);
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       {/* NAV */}
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
+      <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-50">
         <div className="flex items-center gap-2">
           <div className="font-bold text-xl tracking-tight">Dwan Elevators</div>
         </div>
-        <Button onClick={navigateToForm} variant="default" className="bg-[#EFBF04] text-black hover:bg-[#d4aa03] font-bold">
-          Get a Free Proposal
+        <Button onClick={scrollToPlans} variant="default" className="bg-[#EFBF04] text-black hover:bg-[#d4aa03] font-bold">
+          View Plans
         </Button>
       </nav>
 
@@ -44,11 +53,11 @@ export default function Home() {
                 Structured maintenance plans for Bay Area buildings — designed to prevent violations, eliminate unplanned downtime, and turn unpredictable repair costs into a fixed line item.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button onClick={navigateToForm} size="lg" className="text-lg font-bold px-8 h-14 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors flex items-center justify-center gap-2">
-                  Get My Free Proposal <ArrowRight className="w-5 h-5" />
+                <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-8 h-14 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors flex items-center justify-center gap-2">
+                  See Plan Options <ArrowRight className="w-5 h-5" />
                 </Button>
                 <Button onClick={navigateToForm} variant="outline" size="lg" className="text-lg font-bold px-8 h-14 border-white text-white hover:bg-white/10 transition-colors">
-                  See Plan Options
+                  Get a Free Proposal
                 </Button>
               </div>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-400 font-medium">
@@ -108,46 +117,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PAIN SECTION */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">The Real Cost of Inaction</h2>
-            <h3 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">One Shutdown Can Derail Your Entire Month</h3>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              Most elevator failures don't announce themselves. They compound quietly until a single event turns into a cascade of tenant complaints, inspection failures, and emergency repair invoices.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              { title: "Tenant Complaints", desc: "Disruption to residents and commercial occupants damages trust and triggers lease conversations." },
-              { title: "Failed Inspections", desc: "California DOSH violations carry daily fines and force operational shutdowns until resolved." },
-              { title: "Emergency Invoice Shock", desc: "Unplanned repair costs hit capital budgets without warning, often at the worst possible time." },
-              { title: "Legal Exposure", desc: "Documented maintenance gaps create liability. Injuries in poorly maintained equipment can mean uncapped costs." },
-              { title: "Ownership Conversations", desc: "Unplanned failures put property managers in difficult positions with building owners." },
-              { title: "Lost Productive Time", desc: "Chasing vendors and managing unhappy tenants takes you off higher-value work." }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm">
-                <h4 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h4>
-                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 bg-black text-white p-10 md:p-14 rounded-2xl max-w-5xl mx-auto text-center shadow-xl">
-            <p className="text-2xl md:text-3xl font-bold mb-4 text-[#EFBF04]">
-              Most elevator failures are preventable.
-            </p>
-            <p className="text-xl text-gray-300 font-light leading-relaxed">
-              The question isn't whether issues will arise — it's whether your building has a documented, structured maintenance program that reduces risk and protects you when they do.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* PLANS SECTION */}
-      <section className="py-24 bg-gray-50 border-t border-gray-200">
+      {/* PLANS SECTION - Moved above pain section */}
+      <section id="plans" className="py-24 bg-gray-50 border-b border-gray-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">Maintenance Plans</h2>
@@ -188,8 +159,8 @@ export default function Home() {
                 ))}
               </ul>
 
-              <Button onClick={navigateToForm} variant="outline" className="w-full h-14 text-lg font-bold border-gray-300 hover:bg-gray-50 text-gray-900">
-                Get a Standard Plan Proposal
+              <Button onClick={() => selectPlan("Standard Protection")} variant="outline" className="w-full h-14 text-lg font-bold border-gray-300 hover:bg-gray-50 text-gray-900">
+                Select Standard Plan
               </Button>
             </div>
 
@@ -231,10 +202,48 @@ export default function Home() {
                 ))}
               </ul>
 
-              <Button onClick={navigateToForm} className="w-full h-14 text-lg font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] flex justify-center items-center gap-2">
-                Get a Full Coverage Proposal <ArrowRight className="w-5 h-5" />
+              <Button onClick={() => selectPlan("Full Coverage")} className="w-full h-14 text-lg font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] flex justify-center items-center gap-2">
+                Select Full Coverage <ArrowRight className="w-5 h-5" />
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PAIN SECTION */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">The Real Cost of Inaction</h2>
+            <h3 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">One Shutdown Can Derail Your Entire Month</h3>
+            <p className="text-xl text-gray-600 leading-relaxed">
+              Most elevator failures don't announce themselves. They compound quietly until a single event turns into a cascade of tenant complaints, inspection failures, and emergency repair invoices.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              { title: "Tenant Complaints", desc: "Disruption to residents and commercial occupants damages trust and triggers lease conversations." },
+              { title: "Failed Inspections", desc: "California DOSH violations carry daily fines and force operational shutdowns until resolved." },
+              { title: "Emergency Invoice Shock", desc: "Unplanned repair costs hit capital budgets without warning, often at the worst possible time." },
+              { title: "Legal Exposure", desc: "Documented maintenance gaps create liability. Injuries in poorly maintained equipment can mean uncapped costs." },
+              { title: "Ownership Conversations", desc: "Unplanned failures put property managers in difficult positions with building owners." },
+              { title: "Lost Productive Time", desc: "Chasing vendors and managing unhappy tenants takes you off higher-value work." }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm">
+                <h4 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h4>
+                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 bg-black text-white p-10 md:p-14 rounded-2xl max-w-5xl mx-auto text-center shadow-xl">
+            <p className="text-2xl md:text-3xl font-bold mb-4 text-[#EFBF04]">
+              Most elevator failures are preventable.
+            </p>
+            <p className="text-xl text-gray-300 font-light leading-relaxed">
+              The question isn't whether issues will arise — it's whether your building has a documented, structured maintenance program that reduces risk and protects you when they do.
+            </p>
           </div>
         </div>
       </section>
@@ -288,8 +297,8 @@ export default function Home() {
               <p className="text-lg font-medium mb-8 leading-relaxed">
                 We handle the full transition — including documentation transfers, inspection records, and service scheduling — so your building experiences zero service gap. No awkward overlap. No uncovered periods.
               </p>
-              <Button onClick={navigateToForm} className="self-start h-14 px-8 text-lg font-bold bg-black text-white hover:bg-gray-800 flex items-center gap-2">
-                Start My Transition <ArrowRight className="w-5 h-5" />
+              <Button onClick={scrollToPlans} className="self-start h-14 px-8 text-lg font-bold bg-black text-white hover:bg-gray-800 flex items-center gap-2">
+                Choose a Plan <ArrowRight className="w-5 h-5" />
               </Button>
               <p className="text-sm font-bold mt-6 text-black/70 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-black" /> Free transition assessment included.
@@ -343,12 +352,12 @@ export default function Home() {
               Don't Let the Next Shutdown Force Your Hand
             </h3>
             <p className="text-xl text-gray-300 mb-12">
-              Protect your elevators before a minor issue becomes a major emergency. Getting a proposal takes two minutes and costs nothing.
+              Protect your elevators before a minor issue becomes a major emergency. Choosing a plan takes two minutes and costs nothing to get started.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <Button onClick={navigateToForm} size="lg" className="text-lg font-bold px-10 h-16 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
-                Get My Maintenance Proposal
+              <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-10 h-16 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
+                Choose Your Plan
               </Button>
               <Button onClick={navigateToForm} size="lg" variant="outline" className="text-lg font-bold px-10 h-16 border-white text-white hover:bg-white/10 transition-colors">
                 Book a Building Assessment
