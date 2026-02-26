@@ -44,9 +44,9 @@ export default function Home() {
                 Bay Area Commercial Elevator Maintenance
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
-                Elevator Maintenance That<br />
-                Actually Works. Zero<br />
-                Downtime Drama.
+                Elevator Uptime You<br />
+                Don't Have to<br />
+                Think About.
               </h1>
               <p className="text-xl text-gray-300 mb-10 leading-relaxed font-light max-w-2xl">
                 Structured maintenance plans for Bay Area buildings — designed to prevent violations, eliminate unplanned downtime, and turn unpredictable repair costs into a fixed line item.
