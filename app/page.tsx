@@ -40,16 +40,13 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-20">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
-              <div className="inline-block bg-[#EFBF04]/20 border border-[#EFBF04]/50 text-[#EFBF04] px-4 py-1.5 rounded-full text-sm font-semibold mb-6 uppercase tracking-wider">
-                Bay Area Commercial Elevator Maintenance
-              </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
                 Elevator Uptime You<br />
                 Don't Have to<br />
                 Think About.
               </h1>
               <p className="text-xl text-gray-300 mb-10 leading-relaxed font-light max-w-2xl">
-                Structured maintenance plans for Bay Area buildings — designed to prevent violations, eliminate unplanned downtime, and turn unpredictable repair costs into a fixed line item.
+                Structured maintenance plans for Bay Area buildings that turn unpredictable repair costs into a fixed line item.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-8 h-14 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
