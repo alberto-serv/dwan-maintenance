@@ -132,7 +132,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PLANS SECTION - Moved above pain section */}
+      {/* PLANS SECTION */}
       <section id="plans" className="py-24 bg-gray-50 border-b border-gray-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-16">
@@ -225,77 +225,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PAIN SECTION */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">The Real Cost of Inaction</h2>
-            <h3 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">One Shutdown Can Derail Your Entire Month</h3>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              Most elevator failures don't announce themselves. They compound quietly until a single event turns into a cascade of tenant complaints, inspection failures, and emergency repair invoices.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              { title: "Tenant Complaints", desc: "Disruption to residents and commercial occupants damages trust and triggers lease conversations." },
-              { title: "Failed Inspections", desc: "California DOSH violations carry daily fines and force operational shutdowns until resolved." },
-              { title: "Emergency Invoice Shock", desc: "Unplanned repair costs hit capital budgets without warning, often at the worst possible time." },
-              { title: "Legal Exposure", desc: "Documented maintenance gaps create liability. Injuries in poorly maintained equipment can mean uncapped costs." },
-              { title: "Ownership Conversations", desc: "Unplanned failures put property managers in difficult positions with building owners." },
-              { title: "Lost Productive Time", desc: "Chasing vendors and managing unhappy tenants takes you off higher-value work." }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm">
-                <h4 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h4>
-                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 bg-black text-white p-10 md:p-14 rounded-2xl max-w-5xl mx-auto text-center shadow-xl">
-            <p className="text-2xl md:text-3xl font-bold mb-4 text-[#EFBF04]">
-              Most elevator failures are preventable.
-            </p>
-            <p className="text-xl text-gray-300 font-light leading-relaxed">
-              The question isn't whether issues will arise — it's whether your building has a documented, structured maintenance program that reduces risk and protects you when they do.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* REVIEWS SECTION */}
-      <section className="py-24 bg-gray-50 border-t border-gray-200">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-16">
+          <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">What Our Clients Say</h2>
-            <h3 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Trusted by Property Managers Across the Bay Area</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900">Trusted by Property Managers Across the Bay Area</h3>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {[
               {
-                quote: "We switched from a national provider and the difference was night and day. Response times dropped from 6 hours to under 2, and we haven't failed a single inspection since.",
+                quote: "Response times dropped from 6 hours to under 2, and we haven't failed a single inspection since.",
                 name: "Maria C.",
                 role: "Property Manager, SF Financial District",
-                rating: 5,
               },
               {
-                quote: "Dwan's Full Coverage plan eliminated our surprise repair bills entirely. We used to budget $30K a year for emergencies — now it's a predictable monthly line item.",
+                quote: "Dwan's Full Coverage plan eliminated our surprise repair bills entirely. Now it's a predictable monthly line item.",
                 name: "Robert T.",
                 role: "Building Owner, Oakland",
-                rating: 5,
               },
               {
-                quote: "The transition was seamless. They handled all the documentation, coordinated with our previous vendor, and had techs on-site within the first week. Zero downtime.",
+                quote: "The transition was seamless. They handled all the documentation and had techs on-site within the first week.",
                 name: "James W.",
                 role: "Facilities Director, San Jose",
-                rating: 5,
               },
             ].map((review, idx) => (
-              <div key={idx} className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 flex flex-col">
+              <div key={idx} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 flex flex-col">
                 <div className="flex items-center gap-1 mb-4">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-[#EFBF04] text-[#EFBF04]" />
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-[#EFBF04] text-[#EFBF04]" />
                   ))}
                 </div>
                 <p className="text-gray-700 leading-relaxed mb-6 flex-grow">"{review.quote}"</p>
@@ -309,148 +268,88 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BILLING ASSURANCE & SWITCHING OVERVIEW */}
-      <section className="py-24 bg-white border-b border-gray-100">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-            {/* Billing Assurance */}
-            <div>
-              <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">Billing Assurance</h2>
-              <h3 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 leading-tight">No Deposit. Simple Billing.<br />We Operate Like National Providers.</h3>
-
-              <div className="space-y-6 mt-8">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 text-xl shadow-sm">🔓</div>
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-1">No Upfront Deposit</h4>
-                    <p className="text-gray-600">Start your plan without any advance payment required.</p>
-                  </div>
+      {/* BILLING & SWITCHING - Condensed */}
+      <section className="py-16 bg-gray-50 border-t border-gray-200">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl p-8 border border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Simple Billing</h3>
+              <div className="space-y-4 text-sm">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-[#EFBF04] flex-shrink-0" />
+                  <span className="text-gray-700">No upfront deposit</span>
                 </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 text-xl shadow-sm">📅</div>
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-1">First Invoice Net-30</h4>
-                    <p className="text-gray-600">Your first billing cycle begins 30 days after service starts.</p>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-[#EFBF04] flex-shrink-0" />
+                  <span className="text-gray-700">First invoice Net-30</span>
                 </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 text-xl shadow-sm">🔄</div>
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-1">Simple Monthly Billing</h4>
-                    <p className="text-gray-600">One predictable invoice per elevator, every month.</p>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-[#EFBF04] flex-shrink-0" />
+                  <span className="text-gray-700">One predictable monthly invoice per elevator</span>
                 </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 text-xl shadow-sm">🏦</div>
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-1">ACH Setup Available</h4>
-                    <p className="text-gray-600">Automatic payments for fully hands-off billing.</p>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-[#EFBF04] flex-shrink-0" />
+                  <span className="text-gray-700">ACH available for hands-off billing</span>
                 </div>
               </div>
             </div>
-
-            {/* Switching Section */}
-            <div className="bg-[#EFBF04] rounded-3xl p-10 md:p-14 text-black flex flex-col justify-center shadow-xl">
-              <h2 className="text-sm font-bold text-black/60 uppercase tracking-widest mb-3">Changing Providers?</h2>
-              <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Switching Is Easier Than You Think</h3>
-              <p className="text-lg font-medium mb-8 leading-relaxed">
-                We handle the full transition — including documentation transfers, inspection records, and service scheduling — so your building experiences zero service gap. No awkward overlap. No uncovered periods.
+            <div className="bg-[#EFBF04] rounded-2xl p-8 text-black flex flex-col justify-center">
+              <h3 className="text-xl font-bold mb-3">Switching Providers?</h3>
+              <p className="text-sm font-medium mb-6 leading-relaxed">
+                We handle the full transition — documentation, inspection records, and scheduling — so your building experiences zero service gap.
               </p>
-              <Button onClick={scrollToPlans} className="self-start h-14 px-8 text-lg font-bold bg-black text-white hover:bg-gray-800">
+              <Button onClick={scrollToPlans} className="self-start px-6 h-12 font-bold bg-black text-white hover:bg-gray-800">
                 Choose a Plan
               </Button>
-              <p className="text-sm font-bold mt-6 text-black/70 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-black" /> Free transition assessment included.
-              </p>
             </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ASSESSMENT SECTION */}
-      <section className="py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-3">Free Building Assessment</h2>
-            <h3 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">Not Sure Which Plan Is Right for You?</h3>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-              We'll review your elevators, summarize your risk exposure, compare budget scenarios, and give you a clear plan recommendation — no obligation to move forward.
-            </p>
-          </div>
-
-          <div className="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-2xl shadow-md border border-gray-100">
-            <ul className="space-y-5">
-              {[
-                "Elevator condition review",
-                "Risk exposure summary",
-                "Budget comparison: Standard vs. Full Coverage",
-                "Written plan recommendation",
-                "Transition roadmap if switching providers"
-              ].map((item, idx) => (
-                <li key={idx} className="flex items-center text-lg text-gray-800 font-medium">
-                  <CheckCircle2 className="w-6 h-6 text-[#EFBF04] mr-4 flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-24 md:py-32 bg-black text-white text-center relative overflow-hidden">
+      <section className="py-20 bg-black text-white text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #EFBF04 1px, transparent 0)", backgroundSize: "40px 40px" }}></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-sm font-bold text-[#EFBF04] uppercase tracking-widest mb-4">Don't Wait</h2>
-            <h3 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <div className="max-w-2xl mx-auto">
+            <h3 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
               Don't Let the Next Shutdown Force Your Hand
             </h3>
-            <p className="text-xl text-gray-300 mb-12">
-              Protect your elevators before a minor issue becomes a major emergency. Choosing a plan takes two minutes and costs nothing to get started.
+            <p className="text-lg text-gray-300 mb-10">
+              Choosing a plan takes two minutes and costs nothing to get started.
             </p>
-
-            <div className="flex justify-center">
-              <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-10 h-16 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
-                Choose Your Plan
-              </Button>
-            </div>
+            <Button onClick={scrollToPlans} size="lg" className="text-lg font-bold px-10 h-16 bg-[#EFBF04] text-black hover:bg-[#d4aa03] transition-colors">
+              Choose Your Plan
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-white text-gray-900 py-16 border-t border-gray-200">
+      <footer className="bg-white text-gray-900 py-12 border-t border-gray-200">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto text-center">
             <p className="font-bold text-lg tracking-[0.15em] mb-1">DWAN ELEVATOR CO.</p>
-            <p className="text-sm text-gray-500 mb-8">Serving California Since 1919</p>
+            <p className="text-sm text-gray-500 mb-6">Serving California Since 1919</p>
 
-            <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-24 mb-12 text-sm text-gray-600">
-              <div className="space-y-2">
-                <p className="font-bold text-gray-900 mb-3 uppercase tracking-wider text-xs">San Francisco Bay Area</p>
-                <p>1234 Mission Street</p>
-                <p>San Francisco, CA 94103</p>
-                <p className="pt-2"><a href="tel:4154651672" className="hover:text-[#EFBF04] font-medium transition-colors">(415) 465-1672</a></p>
+            <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-24 mb-10 text-sm text-gray-600">
+              <div className="space-y-1">
+                <p className="font-bold text-gray-900 uppercase tracking-wider text-xs">San Francisco Bay Area</p>
+                <p>1234 Mission Street, San Francisco, CA 94103</p>
+                <p><a href="tel:4154651672" className="hover:text-[#EFBF04] font-medium transition-colors">(415) 465-1672</a></p>
               </div>
-              <div className="space-y-2">
-                <p className="font-bold text-gray-900 mb-3 uppercase tracking-wider text-xs">Greater Los Angeles</p>
-                <p>12701 Van Nuys Blvd, Suite D</p>
-                <p>Los Angeles, CA 91331</p>
-                <p className="pt-2"><a href="tel:8002011212" className="hover:text-[#EFBF04] font-medium transition-colors">(800) 201-1212</a></p>
+              <div className="space-y-1">
+                <p className="font-bold text-gray-900 uppercase tracking-wider text-xs">Greater Los Angeles</p>
+                <p>12701 Van Nuys Blvd, Suite D, Los Angeles, CA 91331</p>
+                <p><a href="tel:8002011212" className="hover:text-[#EFBF04] font-medium transition-colors">(800) 201-1212</a></p>
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-8 text-xs text-gray-500 space-y-2">
-              <p>California Contractor License #140423 (C-11 Elevator) • Cal/OSHA Certified</p>
-              <p>$5M General Liability Insurance • Workers' Compensation Insured</p>
-              <p className="mt-6 text-gray-400">© 2026 Dwan Elevator Company</p>
+            <div className="border-t border-gray-200 pt-6 text-xs text-gray-500">
+              <p>California Contractor License #140423 (C-11 Elevator) • Cal/OSHA Certified • $5M General Liability Insurance</p>
+              <p className="mt-3 text-gray-400">© 2026 Dwan Elevator Company</p>
             </div>
           </div>
         </div>
