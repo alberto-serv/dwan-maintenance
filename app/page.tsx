@@ -32,8 +32,8 @@ export default function Home() {
       {/* HERO */}
       <section className="relative bg-black text-white overflow-hidden py-16 lg:py-24">
         <div className="absolute inset-0">
-          <Image src="/images/hero-background.jpeg" alt="Elevator Service" fill className="object-cover opacity-30" priority />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+          <Image src="/images/hero-background.jpeg" alt="Elevator Service" fill className="object-cover opacity-50" priority />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
         </div>
 
         <div className="container mx-auto px-4 relative z-20">
