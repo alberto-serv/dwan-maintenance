@@ -6,18 +6,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Phone } from "lucide-react";
 
-export default function InstallationConfirmation() {
+export default function RepairConfirmation() {
   const router = useRouter();
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("installationData");
+    const stored = sessionStorage.getItem("repairData");
     if (stored) setData(JSON.parse(stored));
   }, []);
-
-  function formatCurrency(n: number) {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,67 +33,72 @@ export default function InstallationConfirmation() {
           {/* Success Header */}
           <div className="text-center mb-10">
             <h1 className="text-3xl md:text-4xl font-heading font-bold mb-3">
-              {data?.consultationType === "video" ? "Video Consultation Requested" : "Site Survey Requested"}
+              Repair Visit Requested
             </h1>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              {data?.consultationType === "video"
-                ? "A Dwan engineer will be in touch to schedule your video consultation."
-                : "A Dwan specialist will be in touch to schedule your on-site survey."}
+              A Dwan technician will be in touch to schedule your repair visit.
             </p>
           </div>
 
-          {/* Quote Summary */}
+          {/* Summary */}
           {data && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
               <h2 className="text-xl font-heading font-bold mb-5 pb-3 border-b-2 border-[#EFBF04]">
-                Quote Summary
+                Repair Summary
               </h2>
 
               <div className="bg-gray-900 text-white rounded-lg p-5 mb-6">
-                <p className="text-xs text-gray-400 uppercase tracking-widest mb-0.5">Estimated Project Cost</p>
-                <p className="text-2xl font-bold">
-                  {formatCurrency(data.quote.min)} – {formatCurrency(data.quote.max)}
-                </p>
-                {data.videoDiscount > 0 && (
-                  <p className="text-sm text-[#EFBF04] font-semibold mt-2">
-                    ${data.videoDiscount} video consultation discount applied
-                  </p>
-                )}
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-3 text-sm mb-6">
-                {data.buildingHeight && (
+                <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-gray-400 text-xs">Building</span>
-                    <p className="font-semibold text-gray-900">{data.buildingHeight}</p>
+                    <p className="text-xs text-gray-400 uppercase tracking-widest mb-0.5">Problem</p>
+                    <p className="text-lg font-bold">{data.problem}</p>
                   </div>
-                )}
-                <div>
-                  <span className="text-gray-400 text-xs">System</span>
-                  <p className="font-semibold text-gray-900">{data.type}</p>
-                </div>
-                <div>
-                  <span className="text-gray-400 text-xs">Landings</span>
-                  <p className="font-semibold text-gray-900">{data.landings}</p>
-                </div>
-                <div>
-                  <span className="text-gray-400 text-xs">Building Type</span>
-                  <p className="font-semibold text-gray-900">{data.buildingType === "new" ? "New Construction" : "Retrofit"}</p>
-                </div>
-                {data.features?.length > 0 && (
-                  <div className="sm:col-span-2">
-                    <span className="text-gray-400 text-xs">Features</span>
-                    <p className="font-semibold text-gray-900">{data.features.join(", ")}</p>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400 uppercase tracking-widest mb-0.5">Estimated Cost</p>
+                    <p className="text-lg font-bold text-[#EFBF04]">{data.problemRange}</p>
                   </div>
-                )}
-                {data.maintenancePlan && data.maintenancePlan !== "None selected" && (
-                  <div className="sm:col-span-2">
-                    <span className="text-gray-400 text-xs">Maintenance Plan</span>
-                    <p className="font-semibold text-gray-900">{data.maintenancePlan}</p>
+                </div>
+                {data.otherDescription && (
+                  <div className="mt-3 pt-3 border-t border-white/10">
+                    <p className="text-sm text-gray-300">{data.otherDescription}</p>
                   </div>
                 )}
               </div>
 
+              {/* Elevator Info */}
+              {(data.elevatorInfo?.manufacturer || data.elevatorInfo?.type || data.elevatorInfo?.yearInstalled || data.elevatorInfo?.stops) && (
+                <div className="mb-6">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Elevator Details</h3>
+                  <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                    {data.elevatorInfo.manufacturer && (
+                      <div>
+                        <span className="text-gray-400 text-xs">Manufacturer</span>
+                        <p className="font-semibold text-gray-900">{data.elevatorInfo.manufacturer}</p>
+                      </div>
+                    )}
+                    {data.elevatorInfo.yearInstalled && (
+                      <div>
+                        <span className="text-gray-400 text-xs">Year Installed</span>
+                        <p className="font-semibold text-gray-900">{data.elevatorInfo.yearInstalled}</p>
+                      </div>
+                    )}
+                    {data.elevatorInfo.type && (
+                      <div>
+                        <span className="text-gray-400 text-xs">Type</span>
+                        <p className="font-semibold text-gray-900">{data.elevatorInfo.type}</p>
+                      </div>
+                    )}
+                    {data.elevatorInfo.stops && (
+                      <div>
+                        <span className="text-gray-400 text-xs">Stops</span>
+                        <p className="font-semibold text-gray-900">{data.elevatorInfo.stops}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Contact */}
               <div className="border-t border-gray-100 pt-5">
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Contact Information</h3>
                 <div className="grid sm:grid-cols-2 gap-3 text-sm">
@@ -105,12 +106,6 @@ export default function InstallationConfirmation() {
                     <span className="text-gray-400 text-xs">Name</span>
                     <p className="font-semibold text-gray-900">{data.name}</p>
                   </div>
-                  {data.company && (
-                    <div>
-                      <span className="text-gray-400 text-xs">Company</span>
-                      <p className="font-semibold text-gray-900">{data.company}</p>
-                    </div>
-                  )}
                   <div>
                     <span className="text-gray-400 text-xs">Email</span>
                     <p className="font-semibold text-gray-900">{data.email}</p>
@@ -122,7 +117,7 @@ export default function InstallationConfirmation() {
                     </div>
                   )}
                   <div className="sm:col-span-2">
-                    <span className="text-gray-400 text-xs">Project Address</span>
+                    <span className="text-gray-400 text-xs">Address</span>
                     <p className="font-semibold text-gray-900">{data.address}</p>
                   </div>
                 </div>
@@ -138,10 +133,9 @@ export default function InstallationConfirmation() {
 
             <div className="space-y-5">
               {[
-                { step: "1", title: "We'll Contact You Within 24 Hours", desc: data?.consultationType === "video" ? "A Dwan specialist will confirm your video consultation time." : "A Dwan specialist will reach out to schedule the site survey." },
-                { step: "2", title: data?.consultationType === "video" ? "Video Consultation" : "On-Site Survey", desc: data?.consultationType === "video" ? "Review your project details and quote with a Dwan engineer on video." : "Our engineer will assess your building, take measurements, and review shaft specifications." },
-                { step: "3", title: "Final Proposal", desc: "You'll receive a detailed proposal with exact pricing, timeline, and equipment specifications." },
-                { step: "4", title: "Installation Begins", desc: "Our licensed team handles the full installation with ongoing progress updates." },
+                { step: "1", title: "We'll Contact You Within 24 Hours", desc: "A Dwan specialist will confirm your appointment and review the issue." },
+                { step: "2", title: "On-Site Diagnosis", desc: "Our technician will inspect the elevator and identify the root cause." },
+                { step: "3", title: "Repair & Testing", desc: "We'll complete the repair and run full safety tests before handoff." },
               ].map((item) => (
                 <div key={item.step} className="flex items-start gap-4">
                   <div className="bg-[#EFBF04] text-black rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm flex-shrink-0">{item.step}</div>
@@ -156,8 +150,8 @@ export default function InstallationConfirmation() {
 
           {/* Contact */}
           <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-6">
-            <h3 className="font-bold mb-2 text-[#EFBF04]">Need Immediate Assistance?</h3>
-            <p className="text-gray-400 text-sm mb-4">Questions about your project? Call us directly.</p>
+            <h3 className="font-bold mb-2 text-[#EFBF04]">Need Immediate Help?</h3>
+            <p className="text-gray-400 text-sm mb-4">Call us directly for emergency repairs.</p>
             <a href="tel:4154651672" className="inline-flex items-center gap-2 bg-[#EFBF04] text-black font-semibold px-5 py-2.5 rounded-[3px] hover:bg-[#EFBF04]/90 transition-colors text-sm">
               <Phone className="w-4 h-4" />
               <span>(415) 465-1672</span>
@@ -172,6 +166,7 @@ export default function InstallationConfirmation() {
         </div>
       </div>
 
+      {/* Footer */}
       <footer className="bg-white border-t border-gray-100 py-6 mt-12">
         <div className="container mx-auto px-4 text-center">
           <p className="font-bold text-sm tracking-[0.15em] text-gray-700 mb-0.5">DWAN ELEVATOR CO.</p>

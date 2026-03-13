@@ -5,11 +5,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Phone, CheckCircle2 } from "lucide-react";
+import { Phone, CheckCircle2, Video, MapPin } from "lucide-react";
 
 // ── Data Models ──────────────────────────────────────────────────────────────
+
+const buildingHeights = [
+  { id: "highrise", label: "High-Rise", desc: "20+ floors", elevatorType: "gearless" },
+  { id: "midrise", label: "Mid-Rise", desc: "5–20 floors", elevatorType: "mrl" },
+  { id: "lowrise", label: "Low-Rise", desc: "2–5 floors", elevatorType: "hydraulic" },
+  { id: "residential", label: "Residential", desc: "Private home or duplex", elevatorType: "vpl" },
+];
 
 const elevatorTypes = [
   { id: "hydraulic",  label: "Hydraulic",        base: 45000,  perStop: 15000, maxStops: 6,  desc: "Low-rise, heavy duty" },
@@ -69,21 +74,28 @@ function formatCurrency(n: number) {
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-export default function Installation() {
+export default function InstallationQuote() {
   const router = useRouter();
   const [step, setStep] = useState(1);
 
-  // Step 1
-  const [selectedType, setSelectedType] = useState("");
-  // Step 2
+  // Step 1: Building Height
+  const [selectedHeight, setSelectedHeight] = useState("");
+  // Step 2: Site & Scale
   const [landings, setLandings] = useState("");
   const [buildingType, setBuildingType] = useState<"new" | "retrofit">("new");
   const [capacity, setCapacity] = useState<"standard" | "heavy">("standard");
-  // Step 3
+  // Step 3: Features
   const [features, setFeatures] = useState<string[]>([]);
-  // Step 5
-  const [booking, setBooking] = useState({ name: "", company: "", email: "", address: "" });
+  // Step 4: Maintenance Plan
+  const [maintenancePlan, setMaintenancePlan] = useState("");
+  // Step 5: Quote (display only)
+  // Step 6: Booking
+  const [consultationType, setConsultationType] = useState<"video" | "visit" | "">("");
+  const [booking, setBooking] = useState({ name: "", company: "", email: "", phone: "", address: "" });
 
+  // Derived
+  const heightProfile = buildingHeights.find((h) => h.id === selectedHeight);
+  const selectedType = selectedHeight === "freight" ? "freight" : (heightProfile?.elevatorType || "");
   const typeProfile = elevatorTypes.find((t) => t.id === selectedType);
   const maxStops = typeProfile?.maxStops || 40;
   const stopsNum = Math.min(Math.max(parseInt(landings) || 2, 2), maxStops);
@@ -96,19 +108,22 @@ export default function Installation() {
     features
   );
 
+  const videoDiscount = 100;
+
   const canProceed = () => {
     switch (step) {
-      case 1: return !!selectedType;
+      case 1: return !!selectedHeight;
       case 2: return !!landings && parseInt(landings) >= 2;
       case 3: return true;
-      case 4: return true;
-      case 5: return !!booking.name && !!booking.email && !!booking.address;
+      case 4: return true; // maintenance plan is optional
+      case 5: return true;
+      case 6: return !!consultationType && !!booking.name && !!booking.email && !!booking.address;
       default: return false;
     }
   };
 
   const handleNext = () => {
-    if (step < 5) setStep(step + 1);
+    if (step < 6) setStep(step + 1);
   };
 
   const handleBack = () => {
@@ -117,11 +132,15 @@ export default function Installation() {
 
   const handleSubmit = () => {
     sessionStorage.setItem("installationData", JSON.stringify({
+      buildingHeight: selectedHeight === "freight" ? "Freight / Industrial" : heightProfile?.label,
       type: typeProfile?.label,
       landings: stopsNum,
       buildingType,
       capacity,
       features: premiumFeatures.filter((f) => features.includes(f.id)).map((f) => f.label),
+      maintenancePlan: maintenancePlan || "None selected",
+      consultationType,
+      videoDiscount: consultationType === "video" ? videoDiscount : 0,
       quote,
       ...booking,
     }));
@@ -132,71 +151,103 @@ export default function Installation() {
     setFeatures((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
   };
 
+  const stepLabels = ["Building", "Site", "Features", "Maintenance", "Quote", "Book"];
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-black text-white py-6 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-100 py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <button onClick={() => router.push("/")} className="hover:opacity-80 transition-opacity">
-              <Image src="/images/logo.webp" alt="Dwan Elevator Co." width={80} height={80} className="w-auto h-16" />
+              <Image src="/images/logo.webp" alt="Dwan Elevator Co." width={80} height={80} className="w-auto h-12" />
             </button>
-            <a href="tel:4154651672" className="flex items-center gap-2 text-[#EFBF04] hover:text-[#EFBF04]/80 transition-colors">
-              <Phone className="w-5 h-5" />
-              <span className="font-semibold">(415) 465-1672</span>
+            <a href="tel:4154651672" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <Phone className="w-4 h-4" />
+              <span className="font-semibold text-sm">(415) 465-1672</span>
             </a>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-10">
         <div className="max-w-4xl mx-auto">
           {/* Progress Bar */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-3">
-              {["System", "Site & Scale", "Features", "Quote", "Book Survey"].map((label, idx) => (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              {stepLabels.map((label, idx) => (
                 <div key={idx} className="flex flex-col items-center flex-1">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mb-1 ${
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-1 ${
                     step > idx + 1 ? "bg-[#EFBF04] text-black" :
-                    step === idx + 1 ? "bg-black text-white" :
-                    "bg-gray-200 text-gray-500"
+                    step === idx + 1 ? "bg-gray-900 text-white" :
+                    "bg-gray-200 text-gray-400"
                   }`}>
                     {step > idx + 1 ? "✓" : idx + 1}
                   </div>
-                  <span className={`text-xs font-medium hidden sm:block ${step === idx + 1 ? "text-gray-900" : "text-gray-400"}`}>{label}</span>
+                  <span className={`text-[10px] font-medium hidden sm:block ${step === idx + 1 ? "text-gray-900" : "text-gray-400"}`}>{label}</span>
                 </div>
               ))}
             </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-[#EFBF04] transition-all duration-300 rounded-full" style={{ width: `${(step / 5) * 100}%` }} />
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-full bg-[#EFBF04] transition-all duration-300 rounded-full" style={{ width: `${(step / 6) * 100}%` }} />
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-xl p-8 md:p-12">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 md:p-10">
 
-            {/* ── Step 1: System Selection ── */}
+            {/* ── Step 1: Building Height ── */}
             {step === 1 && (
               <div>
-                <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Choose Your Elevator System</h1>
-                <p className="text-gray-600 mb-8">Select the type of elevator you need for your project.</p>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">How tall is your building?</h1>
+                <p className="text-gray-500 text-sm mb-8">This determines the right elevator system for your project.</p>
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {elevatorTypes.map((type) => (
-                    <button
-                      key={type.id}
-                      onClick={() => setSelectedType(type.id)}
-                      className={`text-left p-6 rounded-xl border-2 transition-all ${
-                        selectedType === type.id
-                          ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">{type.label}</h3>
-                      <p className="text-sm text-gray-500 mb-3">{type.desc}</p>
-                      <p className="text-sm font-semibold text-gray-700">From {formatCurrency(type.base)}</p>
-                      <p className="text-xs text-gray-400">Up to {type.maxStops} stops</p>
-                    </button>
-                  ))}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {buildingHeights.map((height) => {
+                    const matchedType = elevatorTypes.find((t) => t.id === height.elevatorType);
+                    return (
+                      <button
+                        key={height.id}
+                        onClick={() => setSelectedHeight(height.id)}
+                        className={`text-left p-6 rounded-xl border-2 transition-all ${
+                          selectedHeight === height.id
+                            ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        <h3 className="text-lg font-bold text-gray-900 mb-0.5">{height.label}</h3>
+                        <p className="text-sm text-gray-400 mb-3">{height.desc}</p>
+                        {matchedType && (
+                          <p className="text-xs text-gray-500">
+                            <span className="font-semibold text-gray-700">{matchedType.label}</span> · From {formatCurrency(matchedType.base)}
+                          </p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Freight option */}
+                <div className="mt-6 border-t border-gray-100 pt-6">
+                  <button
+                    onClick={() => {
+                      setSelectedHeight("freight");
+                    }}
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
+                      selectedHeight === "freight"
+                        ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-0.5">Freight / Industrial</h3>
+                        <p className="text-sm text-gray-400">Heavy loads, warehouse or industrial use</p>
+                      </div>
+                      <p className="text-xs text-gray-500 text-right">
+                        <span className="font-semibold text-gray-700">Freight (Heavy)</span><br />From {formatCurrency(100000)}
+                      </p>
+                    </div>
+                  </button>
                 </div>
               </div>
             )}
@@ -204,8 +255,10 @@ export default function Installation() {
             {/* ── Step 2: Site & Scale ── */}
             {step === 2 && (
               <div>
-                <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Site & Scale</h1>
-                <p className="text-gray-600 mb-8">Tell us about your building requirements.</p>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Site & Scale</h1>
+                <p className="text-gray-500 text-sm mb-8">
+                  {typeProfile?.label} system selected · Up to {maxStops} stops
+                </p>
 
                 <div className="space-y-8">
                   <div>
@@ -267,13 +320,13 @@ export default function Installation() {
               </div>
             )}
 
-            {/* ── Step 3: Performance & Compliance ── */}
+            {/* ── Step 3: Features ── */}
             {step === 3 && (
               <div>
-                <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Performance & Compliance</h1>
-                <p className="text-gray-600 mb-8">Select any premium features for your installation.</p>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Premium Features</h1>
+                <p className="text-gray-500 text-sm mb-8">Optional add-ons for your installation.</p>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {premiumFeatures.map((feature) => (
                     <button
                       key={feature.id}
@@ -285,90 +338,200 @@ export default function Installation() {
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                           features.includes(feature.id)
                             ? "bg-[#EFBF04] border-[#EFBF04]"
                             : "border-gray-300"
                         }`}>
                           {features.includes(feature.id) && (
-                            <CheckCircle2 className="w-4 h-4 text-black" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-black" />
                           )}
                         </div>
-                        <span className="font-semibold text-gray-900">{feature.label}</span>
+                        <span className="font-semibold text-gray-900 text-sm">{feature.label}</span>
                       </div>
-                      <span className="text-sm font-bold text-gray-500">+{formatCurrency(feature.cost)}</span>
+                      <span className="text-sm font-bold text-gray-400">+{formatCurrency(feature.cost)}</span>
                     </button>
                   ))}
                 </div>
-
-                <p className="text-sm text-gray-400 mt-6">All features are optional. You can skip this step.</p>
+                <p className="text-xs text-gray-400 mt-4">All features are optional. You can skip this step.</p>
               </div>
             )}
 
-            {/* ── Step 4: Dynamic Quote ── */}
+            {/* ── Step 4: Maintenance Plan ── */}
             {step === 4 && (
               <div>
-                <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Your Estimated Quote</h1>
-                <p className="text-gray-600 mb-8">Based on your configuration. Final pricing confirmed after site survey.</p>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Add a Maintenance Plan</h1>
+                <p className="text-gray-500 text-sm mb-8">Protect your new elevator from day one. Optional — you can discuss during your consultation.</p>
 
-                <div className="bg-black text-white rounded-2xl p-8 md:p-10 mb-8">
-                  <p className="text-sm text-gray-400 uppercase tracking-widest mb-2">Estimated Project Cost</p>
-                  <p className="text-4xl md:text-5xl font-bold mb-1">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Standard */}
+                  <button
+                    onClick={() => setMaintenancePlan(maintenancePlan === "Standard Protection" ? "" : "Standard Protection")}
+                    className={`text-left rounded-xl border-2 p-6 transition-all ${
+                      maintenancePlan === "Standard Protection"
+                        ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Standard Protection</h3>
+                    <p className="text-gray-500 text-xs mb-4">Predictable maintenance. Repairs billed separately.</p>
+
+                    <p className="text-xl font-bold text-gray-900 mb-0.5">$400–$800<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+                    <p className="text-xs text-gray-400 mb-4">per elevator</p>
+
+                    <ul className="space-y-2">
+                      {[
+                        "Scheduled preventive maintenance",
+                        "24/7 emergency response",
+                        "Inspection coordination",
+                        "Compliance checks",
+                      ].map((f, i) => (
+                        <li key={i} className="flex items-start text-xs">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#EFBF04] mr-2 flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-600">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+
+                  {/* Full Coverage */}
+                  <button
+                    onClick={() => setMaintenancePlan(maintenancePlan === "Full Coverage" ? "" : "Full Coverage")}
+                    className={`text-left rounded-xl border-2 p-6 transition-all relative ${
+                      maintenancePlan === "Full Coverage"
+                        ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="absolute top-0 right-6 transform -translate-y-1/2 bg-[#EFBF04] text-black font-bold uppercase tracking-wider text-[10px] px-2.5 py-0.5 rounded-full">
+                      Most Popular
+                    </div>
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Full Coverage</h3>
+                    <p className="text-[#EFBF04] text-xs mb-4">Maximum uptime. Budget certainty.</p>
+
+                    <p className="text-xl font-bold text-gray-900 mb-0.5">$600–$1,200+<span className="text-sm text-gray-400 font-normal">/mo</span></p>
+                    <p className="text-xs text-gray-400 mb-4">per elevator</p>
+
+                    <ul className="space-y-2">
+                      {[
+                        "Everything in Standard, plus:",
+                        "Most replacement parts covered",
+                        "Priority response",
+                        "Proactive component replacement",
+                      ].map((f, i) => (
+                        <li key={i} className={`flex items-start text-xs ${i === 0 ? "font-semibold text-gray-900" : ""}`}>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#EFBF04] mr-2 flex-shrink-0 mt-0.5" />
+                          <span className={i === 0 ? "text-gray-900" : "text-gray-600"}>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+                </div>
+
+                <p className="text-xs text-gray-400 mt-4">Maintenance plan selection is optional. You can add one later.</p>
+              </div>
+            )}
+
+            {/* ── Step 5: Quote ── */}
+            {step === 5 && (
+              <div>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Your Estimated Quote</h1>
+                <p className="text-gray-500 text-sm mb-8">Final pricing confirmed after consultation.</p>
+
+                <div className="bg-gray-900 text-white rounded-xl p-8 mb-6">
+                  <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">Estimated Project Cost</p>
+                  <p className="text-3xl md:text-4xl font-bold mb-1">
                     {formatCurrency(quote.min)} – {formatCurrency(quote.max)}
                   </p>
-                  <p className="text-sm text-gray-400 mb-8">Range accounts for market and site conditions.</p>
+                  <p className="text-xs text-gray-500">Range accounts for market and site conditions.</p>
 
-                  <div className="border-t border-white/10 pt-6">
-                    <p className="text-sm text-gray-400 uppercase tracking-widest mb-2">Estimated Annual Maintenance</p>
-                    <p className="text-2xl font-bold text-[#EFBF04]">
-                      {formatCurrency(quote.maintenance.min)} – {formatCurrency(quote.maintenance.max)}<span className="text-base font-normal text-gray-400"> / year</span>
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">4%–6% of total project cost. Maintenance plans available at checkout.</p>
-                  </div>
+                  {maintenancePlan && (
+                    <div className="border-t border-white/10 mt-5 pt-5">
+                      <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">Maintenance Plan</p>
+                      <p className="text-lg font-bold text-[#EFBF04]">{maintenancePlan}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Config Summary */}
-                <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Configuration Summary</h3>
-                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 mb-6">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Configuration</h3>
+                  <div className="grid sm:grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-gray-500">System</span>
-                      <p className="font-semibold">{typeProfile?.label}</p>
+                      <span className="text-gray-400 text-xs">Building</span>
+                      <p className="font-semibold text-gray-900">{selectedHeight === "freight" ? "Freight / Industrial" : heightProfile?.label}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Landings</span>
-                      <p className="font-semibold">{stopsNum}</p>
+                      <span className="text-gray-400 text-xs">System</span>
+                      <p className="font-semibold text-gray-900">{typeProfile?.label}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Building</span>
-                      <p className="font-semibold">{buildingType === "new" ? "New Construction" : "Retrofit"}</p>
+                      <span className="text-gray-400 text-xs">Landings</span>
+                      <p className="font-semibold text-gray-900">{stopsNum}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Capacity</span>
-                      <p className="font-semibold">{capacity === "standard" ? "Standard (≤3,500 lbs)" : "Heavy Load (4,000+ lbs)"}</p>
+                      <span className="text-gray-400 text-xs">Type</span>
+                      <p className="font-semibold text-gray-900">{buildingType === "new" ? "New Construction" : "Retrofit"}</p>
                     </div>
                     {features.length > 0 && (
                       <div className="sm:col-span-2">
-                        <span className="text-gray-500">Premium Features</span>
-                        <p className="font-semibold">{premiumFeatures.filter((f) => features.includes(f.id)).map((f) => f.label).join(", ")}</p>
+                        <span className="text-gray-400 text-xs">Features</span>
+                        <p className="font-semibold text-gray-900">{premiumFeatures.filter((f) => features.includes(f.id)).map((f) => f.label).join(", ")}</p>
                       </div>
                     )}
                   </div>
                 </div>
+
+                {/* Dual CTA */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => { setConsultationType("video"); handleNext(); }}
+                    className="border-2 border-[#EFBF04] bg-[#EFBF04]/5 rounded-xl p-6 text-left hover:shadow-md transition-all"
+                  >
+                    <Video className="w-6 h-6 text-[#EFBF04] mb-3" />
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">Video Consultation</h3>
+                    <p className="text-sm text-gray-500 mb-3">Review your quote and technical details with an engineer on video.</p>
+                    <div className="bg-[#EFBF04] text-black text-sm font-bold px-3 py-1.5 rounded inline-block">
+                      Save ${videoDiscount} — Book Video Call
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { setConsultationType("visit"); handleNext(); }}
+                    className="border-2 border-gray-200 rounded-xl p-6 text-left hover:border-gray-300 hover:shadow-md transition-all"
+                  >
+                    <MapPin className="w-6 h-6 text-gray-400 mb-3" />
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">In-Person Site Visit</h3>
+                    <p className="text-sm text-gray-500 mb-3">A Dwan engineer visits your site to take measurements and finalize specs.</p>
+                    <span className="text-sm font-bold text-gray-600">Book Site Survey</span>
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* ── Step 5: Booking ── */}
-            {step === 5 && (
+            {/* ── Step 6: Booking ── */}
+            {step === 6 && (
               <div>
-                <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Book Your Site Survey</h1>
-                <p className="text-gray-600 mb-8">A Dwan engineer will visit your site to finalize specifications and pricing.</p>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">
+                  {consultationType === "video" ? "Book Your Video Consultation" : "Book Your Site Survey"}
+                </h1>
+                <p className="text-gray-500 text-sm mb-2">
+                  {consultationType === "video"
+                    ? "A Dwan engineer will review your project details on video."
+                    : "A Dwan engineer will visit your site to finalize specifications."}
+                </p>
+                {consultationType === "video" && (
+                  <div className="bg-[#EFBF04]/10 border border-[#EFBF04]/20 text-[#EFBF04] text-sm font-bold px-4 py-2 rounded-lg mb-6 inline-block">
+                    ${videoDiscount} discount applied to your project
+                  </div>
+                )}
 
-                <div className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-5">
+                  <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-semibold mb-2">Full Name *</label>
+                      <label htmlFor="name" className="block text-sm font-semibold mb-1.5">Full Name *</label>
                       <Input
                         id="name"
                         required
@@ -378,7 +541,7 @@ export default function Installation() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="company" className="block text-sm font-semibold mb-2">Company</label>
+                      <label htmlFor="company" className="block text-sm font-semibold mb-1.5">Company</label>
                       <Input
                         id="company"
                         value={booking.company}
@@ -388,20 +551,32 @@ export default function Installation() {
                     </div>
                   </div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-semibold mb-2">Email *</label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={booking.email}
-                      onChange={(e) => setBooking({ ...booking, email: e.target.value })}
-                      placeholder="john@company.com"
-                    />
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-semibold mb-1.5">Email *</label>
+                      <Input
+                        id="email"
+                        type="email"
+                        required
+                        value={booking.email}
+                        onChange={(e) => setBooking({ ...booking, email: e.target.value })}
+                        placeholder="john@company.com"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-semibold mb-1.5">Phone</label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={booking.phone}
+                        onChange={(e) => setBooking({ ...booking, phone: e.target.value })}
+                        placeholder="(415) 555-0123"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label htmlFor="address" className="block text-sm font-semibold mb-2">Project Address *</label>
+                    <label htmlFor="address" className="block text-sm font-semibold mb-1.5">Project Address *</label>
                     <Input
                       id="address"
                       required
@@ -410,49 +585,16 @@ export default function Installation() {
                       placeholder="123 Main Street, San Francisco, CA"
                     />
                   </div>
-
-                  <div>
-                    <label htmlFor="upload" className="block text-sm font-semibold mb-2">Upload Architectural Drawings / Shaft Specs (Optional)</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#EFBF04] transition-colors cursor-pointer">
-                      <input type="file" id="upload" accept=".pdf,.dwg,.dxf" className="hidden" />
-                      <label htmlFor="upload" className="cursor-pointer">
-                        <p className="text-gray-500 font-medium">Click to upload or drag files here</p>
-                        <p className="text-xs text-gray-400 mt-1">PDF, DWG, or DXF — max 25 MB</p>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Maintenance plan upsell */}
-                  <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                    <h3 className="text-lg font-heading font-bold mb-1 pb-3 border-b-2 border-[#EFBF04]">
-                      Add a Maintenance Plan
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-4 mb-4">Protect your new elevator from day one with a Dwan maintenance plan.</p>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="border-2 border-gray-200 rounded-xl p-5">
-                        <h4 className="font-bold text-gray-900 mb-1">Standard Protection</h4>
-                        <p className="text-sm text-gray-500 mb-2">$400–$800/mo per elevator</p>
-                        <p className="text-xs text-gray-400">Preventive maintenance. Repairs billed separately.</p>
-                      </div>
-                      <div className="border-2 border-[#EFBF04] bg-[#EFBF04]/5 rounded-xl p-5 relative">
-                        <div className="absolute -top-2 right-4 bg-[#EFBF04] text-black font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">Popular</div>
-                        <h4 className="font-bold text-gray-900 mb-1">Full Coverage</h4>
-                        <p className="text-sm text-gray-500 mb-2">$600–$1,200+/mo per elevator</p>
-                        <p className="text-xs text-gray-400">Most parts included. Priority response.</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-3">Maintenance details will be discussed during your site survey.</p>
-                  </div>
                 </div>
               </div>
             )}
 
             {/* Navigation buttons */}
-            <div className="flex items-center justify-between mt-10 pt-8 border-t border-gray-100">
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
               {step > 1 ? (
                 <button
                   onClick={handleBack}
-                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                  className="text-gray-500 hover:text-gray-900 font-medium text-sm transition-colors"
                 >
                   &larr; Back
                 </button>
@@ -464,17 +606,20 @@ export default function Installation() {
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
-                  className="px-8 h-12 text-lg font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-6 h-11 font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Continue
                 </Button>
+              ) : step === 5 ? (
+                // Step 5 has its own CTAs (video / visit), so hide the main button
+                <div />
               ) : (
                 <Button
                   onClick={handleSubmit}
                   disabled={!canProceed()}
-                  className="px-8 h-12 text-lg font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-6 h-11 font-bold bg-[#EFBF04] text-black hover:bg-[#d4aa03] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Book Site Survey
+                  {consultationType === "video" ? "Book Video Call" : "Book Site Survey"}
                 </Button>
               )}
             </div>
@@ -483,11 +628,10 @@ export default function Installation() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-black text-white py-8 mt-16">
+      <footer className="bg-white border-t border-gray-100 py-6 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p className="font-bold text-sm tracking-[0.15em] mb-1">DWAN ELEVATOR CO.</p>
-          <p className="text-xs text-gray-500 mb-4">Serving California Since 1919</p>
-          <p className="text-xs text-gray-600">© 2026 Dwan Elevator Company</p>
+          <p className="font-bold text-sm tracking-[0.15em] text-gray-700 mb-0.5">DWAN ELEVATOR CO.</p>
+          <p className="text-xs text-gray-400">Serving California Since 1919</p>
         </div>
       </footer>
     </div>
