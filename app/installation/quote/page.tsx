@@ -79,8 +79,8 @@ export default function InstallationQuote() {
 
   // Step 1: Building Height + Type + Capacity
   const [selectedHeight, setSelectedHeight] = useState("");
-  const [buildingType, setBuildingType] = useState<"new" | "retrofit">("new");
-  const [capacity, setCapacity] = useState<"standard" | "heavy">("standard");
+  const [buildingType, setBuildingType] = useState<"new" | "retrofit" | "">("");
+  const [capacity, setCapacity] = useState<"standard" | "heavy" | "">("");
   // Step 2: Features
   const [features, setFeatures] = useState<string[]>([]);
   // Step 3: Maintenance Plan
@@ -108,7 +108,7 @@ export default function InstallationQuote() {
 
   const canProceed = () => {
     switch (step) {
-      case 1: return !!selectedHeight;
+      case 1: return !!selectedHeight && !!buildingType && !!capacity;
       case 2: return true;
       case 3: return true;
       case 4: return true;
