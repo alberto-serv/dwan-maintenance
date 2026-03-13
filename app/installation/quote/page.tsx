@@ -10,17 +10,16 @@ import { Phone, CheckCircle2, Video, MapPin } from "lucide-react";
 // ── Data Models ──────────────────────────────────────────────────────────────
 
 const buildingHeights = [
-  { id: "highrise", label: "High-Rise", desc: "20+ floors", elevatorType: "gearless" },
-  { id: "midrise", label: "Mid-Rise", desc: "5–20 floors", elevatorType: "mrl" },
-  { id: "lowrise", label: "Low-Rise", desc: "2–5 floors", elevatorType: "hydraulic" },
-  { id: "residential", label: "Residential", desc: "Private home or duplex", elevatorType: "vpl" },
+  { id: "highrise", label: "High-Rise", desc: "20+ floors", elevatorType: "gearless", defaultStops: 10 },
+  { id: "midrise", label: "Mid-Rise", desc: "5–20 floors", elevatorType: "mrl", defaultStops: 5 },
+  { id: "lowrise", label: "Low-Rise", desc: "2–5 floors", elevatorType: "hydraulic", defaultStops: 3 },
+  { id: "residential", label: "Residential", desc: "Private home or duplex", elevatorType: "vpl", defaultStops: 2 },
 ];
 
 const elevatorTypes = [
   { id: "hydraulic",  label: "Hydraulic",        base: 45000,  perStop: 15000, maxStops: 6,  desc: "Low-rise, heavy duty" },
   { id: "mrl",        label: "MRL Traction",     base: 75000,  perStop: 20000, maxStops: 12, desc: "Mid-rise, energy efficient" },
   { id: "gearless",   label: "Gearless Traction", base: 175000, perStop: 35000, maxStops: 40, desc: "High-rise, high-speed" },
-  { id: "freight",    label: "Freight (Heavy)",   base: 100000, perStop: 25000, maxStops: 10, desc: "Industrial, large loads" },
   { id: "vpl",        label: "VPL (Accessibility)", base: 12000, perStop: 3000, maxStops: 2, desc: "ADA compliance, small footprint" },
 ];
 
@@ -78,27 +77,24 @@ export default function InstallationQuote() {
   const router = useRouter();
   const [step, setStep] = useState(1);
 
-  // Step 1: Building Height
+  // Step 1: Building Height + Type + Capacity
   const [selectedHeight, setSelectedHeight] = useState("");
-  // Step 2: Site & Scale
-  const [landings, setLandings] = useState("");
   const [buildingType, setBuildingType] = useState<"new" | "retrofit">("new");
   const [capacity, setCapacity] = useState<"standard" | "heavy">("standard");
-  // Step 3: Features
+  // Step 2: Features
   const [features, setFeatures] = useState<string[]>([]);
-  // Step 4: Maintenance Plan
+  // Step 3: Maintenance Plan
   const [maintenancePlan, setMaintenancePlan] = useState("");
-  // Step 5: Quote (display only)
-  // Step 6: Booking
+  // Step 4: Quote (display only)
+  // Step 5: Booking
   const [consultationType, setConsultationType] = useState<"video" | "visit" | "">("");
   const [booking, setBooking] = useState({ name: "", company: "", email: "", phone: "", address: "" });
 
   // Derived
   const heightProfile = buildingHeights.find((h) => h.id === selectedHeight);
-  const selectedType = selectedHeight === "freight" ? "freight" : (heightProfile?.elevatorType || "");
+  const selectedType = heightProfile?.elevatorType || "";
   const typeProfile = elevatorTypes.find((t) => t.id === selectedType);
-  const maxStops = typeProfile?.maxStops || 40;
-  const stopsNum = Math.min(Math.max(parseInt(landings) || 2, 2), maxStops);
+  const stopsNum = heightProfile?.defaultStops || 2;
 
   const quote = calculateQuote(
     selectedType,
@@ -108,22 +104,21 @@ export default function InstallationQuote() {
     features
   );
 
-  const videoDiscount = 100;
+  const videoDiscount = 400;
 
   const canProceed = () => {
     switch (step) {
       case 1: return !!selectedHeight;
-      case 2: return !!landings && parseInt(landings) >= 2;
+      case 2: return true;
       case 3: return true;
-      case 4: return true; // maintenance plan is optional
-      case 5: return true;
-      case 6: return !!consultationType && !!booking.name && !!booking.email && !!booking.address;
+      case 4: return true;
+      case 5: return !!consultationType && !!booking.name && !!booking.email && !!booking.address;
       default: return false;
     }
   };
 
   const handleNext = () => {
-    if (step < 6) setStep(step + 1);
+    if (step < 5) setStep(step + 1);
   };
 
   const handleBack = () => {
@@ -132,7 +127,7 @@ export default function InstallationQuote() {
 
   const handleSubmit = () => {
     sessionStorage.setItem("installationData", JSON.stringify({
-      buildingHeight: selectedHeight === "freight" ? "Freight / Industrial" : heightProfile?.label,
+      buildingHeight: heightProfile?.label,
       type: typeProfile?.label,
       landings: stopsNum,
       buildingType,
@@ -151,7 +146,7 @@ export default function InstallationQuote() {
     setFeatures((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
   };
 
-  const stepLabels = ["Building", "Site", "Features", "Maintenance", "Quote", "Book"];
+  const stepLabels = ["Building", "Features", "Maintenance", "Quote", "Book"];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -189,139 +184,92 @@ export default function InstallationQuote() {
               ))}
             </div>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-[#EFBF04] transition-all duration-300 rounded-full" style={{ width: `${(step / 6) * 100}%` }} />
+              <div className="h-full bg-[#EFBF04] transition-all duration-300 rounded-full" style={{ width: `${(step / 5) * 100}%` }} />
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 md:p-10">
 
-            {/* ── Step 1: Building Height ── */}
+            {/* ── Step 1: Building Height + Type + Capacity ── */}
             {step === 1 && (
               <div>
-                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">How tall is your building?</h1>
+                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Tell us about your building</h1>
                 <p className="text-gray-500 text-sm mb-8">This determines the right elevator system for your project.</p>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {buildingHeights.map((height) => {
-                    const matchedType = elevatorTypes.find((t) => t.id === height.elevatorType);
-                    return (
+                <div className="mb-8">
+                  <label className="block text-sm font-semibold mb-3">Building Height *</label>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {buildingHeights.map((height) => {
+                      const matchedType = elevatorTypes.find((t) => t.id === height.elevatorType);
+                      return (
+                        <button
+                          key={height.id}
+                          onClick={() => setSelectedHeight(height.id)}
+                          className={`text-left p-6 rounded-xl border-2 transition-all ${
+                            selectedHeight === height.id
+                              ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          <h3 className="text-lg font-bold text-gray-900 mb-0.5">{height.label}</h3>
+                          <p className="text-sm text-gray-400 mb-3">{height.desc}</p>
+                          {matchedType && (
+                            <p className="text-xs text-gray-500">
+                              <span className="font-semibold text-gray-700">{matchedType.label}</span> · From {formatCurrency(matchedType.base)}
+                            </p>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <label className="block text-sm font-semibold mb-3">Building Type *</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {(["new", "retrofit"] as const).map((t) => (
                       <button
-                        key={height.id}
-                        onClick={() => setSelectedHeight(height.id)}
-                        className={`text-left p-6 rounded-xl border-2 transition-all ${
-                          selectedHeight === height.id
-                            ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
+                        key={t}
+                        type="button"
+                        onClick={() => setBuildingType(t)}
+                        className={`p-4 rounded-xl border-2 text-left transition-all ${
+                          buildingType === t
+                            ? "border-[#EFBF04] bg-[#EFBF04]/5"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <h3 className="text-lg font-bold text-gray-900 mb-0.5">{height.label}</h3>
-                        <p className="text-sm text-gray-400 mb-3">{height.desc}</p>
-                        {matchedType && (
-                          <p className="text-xs text-gray-500">
-                            <span className="font-semibold text-gray-700">{matchedType.label}</span> · From {formatCurrency(matchedType.base)}
-                          </p>
-                        )}
+                        <p className="font-bold text-gray-900">{t === "new" ? "New Construction" : "Retrofit"}</p>
+                        <p className="text-sm text-gray-500">{t === "new" ? "Building from scratch" : "Existing building"}</p>
                       </button>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
 
-                {/* Freight option */}
-                <div className="mt-6 border-t border-gray-100 pt-6">
-                  <button
-                    onClick={() => {
-                      setSelectedHeight("freight");
-                    }}
-                    className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
-                      selectedHeight === "freight"
-                        ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-0.5">Freight / Industrial</h3>
-                        <p className="text-sm text-gray-400">Heavy loads, warehouse or industrial use</p>
-                      </div>
-                      <p className="text-xs text-gray-500 text-right">
-                        <span className="font-semibold text-gray-700">Freight (Heavy)</span><br />From {formatCurrency(100000)}
-                      </p>
-                    </div>
-                  </button>
+                <div>
+                  <label className="block text-sm font-semibold mb-3">Capacity *</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {(["standard", "heavy"] as const).map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCapacity(c)}
+                        className={`p-4 rounded-xl border-2 text-left transition-all ${
+                          capacity === c
+                            ? "border-[#EFBF04] bg-[#EFBF04]/5"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        <p className="font-bold text-gray-900">{c === "standard" ? "Standard" : "Heavy Load"}</p>
+                        <p className="text-sm text-gray-500">{c === "standard" ? "Up to 3,500 lbs" : "4,000 lbs+"}</p>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* ── Step 2: Site & Scale ── */}
+            {/* ── Step 2: Features ── */}
             {step === 2 && (
-              <div>
-                <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Site & Scale</h1>
-                <p className="text-gray-500 text-sm mb-8">
-                  {typeProfile?.label} system selected · Up to {maxStops} stops
-                </p>
-
-                <div className="space-y-8">
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Number of Landings *</label>
-                    <Input
-                      type="number"
-                      min={2}
-                      max={maxStops}
-                      required
-                      value={landings}
-                      onChange={(e) => setLandings(e.target.value)}
-                      placeholder={`2 – ${maxStops}`}
-                    />
-                    <p className="text-xs text-gray-400 mt-1">{typeProfile?.label} supports up to {maxStops} stops.</p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-3">Building Type *</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {(["new", "retrofit"] as const).map((t) => (
-                        <button
-                          key={t}
-                          type="button"
-                          onClick={() => setBuildingType(t)}
-                          className={`p-4 rounded-xl border-2 text-left transition-all ${
-                            buildingType === t
-                              ? "border-[#EFBF04] bg-[#EFBF04]/5"
-                              : "border-gray-200 hover:border-gray-300"
-                          }`}
-                        >
-                          <p className="font-bold text-gray-900">{t === "new" ? "New Construction" : "Retrofit"}</p>
-                          <p className="text-sm text-gray-500">{t === "new" ? "Building from scratch" : "Existing building"}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-3">Capacity *</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {(["standard", "heavy"] as const).map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => setCapacity(c)}
-                          className={`p-4 rounded-xl border-2 text-left transition-all ${
-                            capacity === c
-                              ? "border-[#EFBF04] bg-[#EFBF04]/5"
-                              : "border-gray-200 hover:border-gray-300"
-                          }`}
-                        >
-                          <p className="font-bold text-gray-900">{c === "standard" ? "Standard" : "Heavy Load"}</p>
-                          <p className="text-sm text-gray-500">{c === "standard" ? "Up to 3,500 lbs" : "4,000 lbs+"}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ── Step 3: Features ── */}
-            {step === 3 && (
               <div>
                 <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Premium Features</h1>
                 <p className="text-gray-500 text-sm mb-8">Optional add-ons for your installation.</p>
@@ -358,37 +306,44 @@ export default function InstallationQuote() {
               </div>
             )}
 
-            {/* ── Step 4: Maintenance Plan ── */}
-            {step === 4 && (
+            {/* ── Step 3: Maintenance Plan ── */}
+            {step === 3 && (
               <div>
                 <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Add a Maintenance Plan</h1>
                 <p className="text-gray-500 text-sm mb-8">Protect your new elevator from day one. Optional — you can discuss during your consultation.</p>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Standard */}
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Standard Protection */}
                   <button
                     onClick={() => setMaintenancePlan(maintenancePlan === "Standard Protection" ? "" : "Standard Protection")}
-                    className={`text-left rounded-xl border-2 p-6 transition-all ${
+                    className={`text-left rounded-2xl border-2 p-8 transition-all flex flex-col ${
                       maintenancePlan === "Standard Protection"
                         ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">Standard Protection</h3>
-                    <p className="text-gray-500 text-xs mb-4">Predictable maintenance. Repairs billed separately.</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-1">Standard Protection</h3>
+                    <p className="text-gray-500 text-sm mb-5">Predictable maintenance. Repairs billed separately.</p>
 
-                    <p className="text-xl font-bold text-gray-900 mb-0.5">$400–$800<span className="text-sm text-gray-400 font-normal">/mo</span></p>
-                    <p className="text-xs text-gray-400 mb-4">per elevator</p>
+                    <div className="bg-gray-50 text-gray-700 text-xs font-bold px-3 py-1.5 rounded mb-5 inline-block self-start border border-gray-100">
+                      Best for newer or lower-traffic buildings
+                    </div>
 
-                    <ul className="space-y-2">
+                    <div className="mb-5">
+                      <p className="text-2xl font-bold text-gray-900">$400–$800<span className="text-base text-gray-400 font-normal">/mo per elevator</span></p>
+                      <p className="text-gray-400 text-xs">($4,800–$9,600+ annually)</p>
+                    </div>
+
+                    <ul className="space-y-3 flex-grow">
                       {[
-                        "Scheduled preventive maintenance",
+                        "Scheduled preventive maintenance visits",
                         "24/7 emergency response",
-                        "Inspection coordination",
-                        "Compliance checks",
+                        "California inspection coordination",
+                        "Compliance checks at every visit",
+                        "Detailed reporting for property managers"
                       ].map((f, i) => (
-                        <li key={i} className="flex items-start text-xs">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#EFBF04] mr-2 flex-shrink-0 mt-0.5" />
+                        <li key={i} className="flex items-start text-sm">
+                          <CheckCircle2 className="w-4 h-4 text-[#EFBF04] mr-2.5 flex-shrink-0 mt-0.5" />
                           <span className="text-gray-600">{f}</span>
                         </li>
                       ))}
@@ -398,32 +353,43 @@ export default function InstallationQuote() {
                   {/* Full Coverage */}
                   <button
                     onClick={() => setMaintenancePlan(maintenancePlan === "Full Coverage" ? "" : "Full Coverage")}
-                    className={`text-left rounded-xl border-2 p-6 transition-all relative ${
+                    className={`text-left rounded-2xl border-2 p-8 transition-all flex flex-col relative ${
                       maintenancePlan === "Full Coverage"
-                        ? "border-[#EFBF04] bg-[#EFBF04]/5 shadow-sm"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? "border-[#EFBF04] bg-gray-900 shadow-lg"
+                        : "bg-gray-900 border-gray-800 hover:border-gray-700"
                     }`}
                   >
-                    <div className="absolute top-0 right-6 transform -translate-y-1/2 bg-[#EFBF04] text-black font-bold uppercase tracking-wider text-[10px] px-2.5 py-0.5 rounded-full">
+                    <div className="absolute top-0 right-8 transform -translate-y-1/2 bg-[#EFBF04] text-black font-bold uppercase tracking-wider text-xs px-3 py-1 rounded-full">
                       Most Popular
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">Full Coverage</h3>
-                    <p className="text-[#EFBF04] text-xs mb-4">Maximum uptime. Budget certainty.</p>
+                    <h3 className="text-2xl font-bold text-white mb-1">Full Coverage</h3>
+                    <p className="text-[#EFBF04] text-sm mb-5">Maximum uptime. Budget certainty.</p>
 
-                    <p className="text-xl font-bold text-gray-900 mb-0.5">$600–$1,200+<span className="text-sm text-gray-400 font-normal">/mo</span></p>
-                    <p className="text-xs text-gray-400 mb-4">per elevator</p>
+                    <div className="bg-[#EFBF04]/10 text-[#EFBF04] text-xs font-bold px-3 py-1.5 rounded mb-5 inline-block self-start border border-[#EFBF04]/20">
+                      Best for high-traffic or aging equipment
+                    </div>
 
-                    <ul className="space-y-2">
+                    <div className="mb-5">
+                      <p className="text-2xl font-bold text-white">$600–$1,200+<span className="text-base text-gray-400 font-normal">/mo per elevator</span></p>
+                      <p className="text-gray-500 text-xs">($7,200–$14,400+ annually)</p>
+                    </div>
+
+                    <ul className="space-y-3 flex-grow">
+                      <li className="flex items-start text-sm font-semibold text-white">
+                        <CheckCircle2 className="w-4 h-4 text-[#EFBF04] mr-2.5 flex-shrink-0 mt-0.5" />
+                        Everything in Standard, plus:
+                      </li>
                       {[
-                        "Everything in Standard, plus:",
                         "Most replacement parts covered",
-                        "Priority response",
+                        "Priority response over Standard",
                         "Proactive component replacement",
+                        "Long-term asset protection",
+                        "Reduced exposure to repair spikes"
                       ].map((f, i) => (
-                        <li key={i} className={`flex items-start text-xs ${i === 0 ? "font-semibold text-gray-900" : ""}`}>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#EFBF04] mr-2 flex-shrink-0 mt-0.5" />
-                          <span className={i === 0 ? "text-gray-900" : "text-gray-600"}>{f}</span>
+                        <li key={i} className="flex items-start text-sm">
+                          <CheckCircle2 className="w-4 h-4 text-[#EFBF04] mr-2.5 flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-300">{f}</span>
                         </li>
                       ))}
                     </ul>
@@ -434,8 +400,8 @@ export default function InstallationQuote() {
               </div>
             )}
 
-            {/* ── Step 5: Quote ── */}
-            {step === 5 && (
+            {/* ── Step 4: Quote ── */}
+            {step === 4 && (
               <div>
                 <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">Your Estimated Quote</h1>
                 <p className="text-gray-500 text-sm mb-8">Final pricing confirmed after consultation.</p>
@@ -461,19 +427,19 @@ export default function InstallationQuote() {
                   <div className="grid sm:grid-cols-2 gap-3 text-sm">
                     <div>
                       <span className="text-gray-400 text-xs">Building</span>
-                      <p className="font-semibold text-gray-900">{selectedHeight === "freight" ? "Freight / Industrial" : heightProfile?.label}</p>
+                      <p className="font-semibold text-gray-900">{heightProfile?.label}</p>
                     </div>
                     <div>
                       <span className="text-gray-400 text-xs">System</span>
                       <p className="font-semibold text-gray-900">{typeProfile?.label}</p>
                     </div>
                     <div>
-                      <span className="text-gray-400 text-xs">Landings</span>
-                      <p className="font-semibold text-gray-900">{stopsNum}</p>
-                    </div>
-                    <div>
                       <span className="text-gray-400 text-xs">Type</span>
                       <p className="font-semibold text-gray-900">{buildingType === "new" ? "New Construction" : "Retrofit"}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-400 text-xs">Capacity</span>
+                      <p className="font-semibold text-gray-900">{capacity === "standard" ? "Standard" : "Heavy Load"}</p>
                     </div>
                     {features.length > 0 && (
                       <div className="sm:col-span-2">
@@ -490,7 +456,6 @@ export default function InstallationQuote() {
                     onClick={() => { setConsultationType("video"); handleNext(); }}
                     className="border-2 border-[#EFBF04] bg-[#EFBF04]/5 rounded-xl p-6 text-left hover:shadow-md transition-all"
                   >
-                    <Video className="w-6 h-6 text-[#EFBF04] mb-3" />
                     <h3 className="text-lg font-bold text-gray-900 mb-1">Video Consultation</h3>
                     <p className="text-sm text-gray-500 mb-3">Review your quote and technical details with an engineer on video.</p>
                     <div className="bg-[#EFBF04] text-black text-sm font-bold px-3 py-1.5 rounded inline-block">
@@ -502,7 +467,6 @@ export default function InstallationQuote() {
                     onClick={() => { setConsultationType("visit"); handleNext(); }}
                     className="border-2 border-gray-200 rounded-xl p-6 text-left hover:border-gray-300 hover:shadow-md transition-all"
                   >
-                    <MapPin className="w-6 h-6 text-gray-400 mb-3" />
                     <h3 className="text-lg font-bold text-gray-900 mb-1">In-Person Site Visit</h3>
                     <p className="text-sm text-gray-500 mb-3">A Dwan engineer visits your site to take measurements and finalize specs.</p>
                     <span className="text-sm font-bold text-gray-600">Book Site Survey</span>
@@ -511,8 +475,8 @@ export default function InstallationQuote() {
               </div>
             )}
 
-            {/* ── Step 6: Booking ── */}
-            {step === 6 && (
+            {/* ── Step 5: Booking ── */}
+            {step === 5 && (
               <div>
                 <h1 className="text-2xl md:text-3xl font-heading font-bold mb-2">
                   {consultationType === "video" ? "Book Your Video Consultation" : "Book Your Site Survey"}
@@ -602,7 +566,7 @@ export default function InstallationQuote() {
                 <div />
               )}
 
-              {step < 5 ? (
+              {step < 4 ? (
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
@@ -610,8 +574,7 @@ export default function InstallationQuote() {
                 >
                   Continue
                 </Button>
-              ) : step === 5 ? (
-                // Step 5 has its own CTAs (video / visit), so hide the main button
+              ) : step === 4 ? (
                 <div />
               ) : (
                 <Button

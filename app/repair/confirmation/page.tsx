@@ -125,29 +125,6 @@ export default function RepairConfirmation() {
             </div>
           )}
 
-          {/* Next Steps */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
-            <h2 className="text-xl font-heading font-bold mb-5 pb-3 border-b-2 border-[#EFBF04]">
-              What Happens Next
-            </h2>
-
-            <div className="space-y-5">
-              {[
-                { step: "1", title: "We'll Contact You Within 24 Hours", desc: "A Dwan specialist will confirm your appointment and review the issue." },
-                { step: "2", title: "On-Site Diagnosis", desc: "Our technician will inspect the elevator and identify the root cause." },
-                { step: "3", title: "Repair & Testing", desc: "We'll complete the repair and run full safety tests before handoff." },
-              ].map((item) => (
-                <div key={item.step} className="flex items-start gap-4">
-                  <div className="bg-[#EFBF04] text-black rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm flex-shrink-0">{item.step}</div>
-                  <div>
-                    <h3 className="font-semibold text-sm mb-0.5">{item.title}</h3>
-                    <p className="text-gray-500 text-sm">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Contact */}
           <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-6">
             <h3 className="font-bold mb-2 text-[#EFBF04]">Need Immediate Help?</h3>
