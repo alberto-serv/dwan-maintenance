@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Star, Wrench, Settings, HardHat } from "lucide-react";
+import { CheckCircle2, Star } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -30,21 +30,26 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="relative bg-white overflow-hidden py-16 lg:py-24 border-b border-gray-100">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-black text-white overflow-hidden py-16 lg:py-24">
+        <div className="absolute inset-0">
+          <Image src="/images/hero-background.jpeg" alt="Elevator Service" fill className="object-cover opacity-30" priority />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-20">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight text-gray-900">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight text-white">
               California's Trusted<br />
               Elevator Partner.
             </h1>
-            <p className="text-xl text-gray-500 mb-6 leading-relaxed font-light max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 mb-6 leading-relaxed font-light max-w-2xl mx-auto">
               Installation, maintenance, and repair — all from one licensed C-11 contractor. Serving California since 1919.
             </p>
             {/* Social Validation */}
             <div className="flex items-center justify-center gap-4 mb-12">
               <div className="flex -space-x-2">
                 {["M", "R", "J", "T"].map((initial, idx) => (
-                  <div key={idx} className="w-8 h-8 rounded-full bg-[#EFBF04] border-2 border-white flex items-center justify-center text-black font-bold text-xs">
+                  <div key={idx} className="w-8 h-8 rounded-full bg-[#EFBF04] border-2 border-black flex items-center justify-center text-black font-bold text-xs">
                     {initial}
                   </div>
                 ))}
@@ -53,7 +58,7 @@ export default function Home() {
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-[#EFBF04] text-[#EFBF04]" />
                 ))}
-                <span className="text-gray-600 text-sm font-semibold ml-1">4.9/5</span>
+                <span className="text-white text-sm font-semibold ml-1">4.9/5</span>
               </div>
               <span className="text-gray-400 text-sm">500+ projects completed</span>
             </div>
@@ -61,10 +66,9 @@ export default function Home() {
             {/* 3 Entry Points */}
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <button
-                onClick={() => router.push("/installation")}
+                onClick={() => router.push("/installation/quote")}
                 className="group bg-white border-2 border-gray-200 hover:border-[#EFBF04] rounded-2xl p-8 text-left transition-all hover:shadow-lg"
               >
-                <HardHat className="w-8 h-8 text-[#EFBF04] mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Installation</h3>
                 <p className="text-sm text-gray-500 mb-4">New construction or retrofit. Get a budget range in minutes.</p>
                 <span className="text-sm font-bold text-[#EFBF04] group-hover:underline">Get a Quote</span>
@@ -74,7 +78,6 @@ export default function Home() {
                 onClick={scrollToPlans}
                 className="group bg-white border-2 border-gray-200 hover:border-[#EFBF04] rounded-2xl p-8 text-left transition-all hover:shadow-lg"
               >
-                <Settings className="w-8 h-8 text-[#EFBF04] mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Maintenance</h3>
                 <p className="text-sm text-gray-500 mb-4">Structured plans that prevent failures and keep you compliant.</p>
                 <span className="text-sm font-bold text-[#EFBF04] group-hover:underline">View Plans</span>
@@ -84,7 +87,6 @@ export default function Home() {
                 onClick={() => router.push("/repair")}
                 className="group bg-white border-2 border-gray-200 hover:border-[#EFBF04] rounded-2xl p-8 text-left transition-all hover:shadow-lg"
               >
-                <Wrench className="w-8 h-8 text-[#EFBF04] mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Repair</h3>
                 <p className="text-sm text-gray-500 mb-4">Doors stuck? Elevator down? Get a repair estimate fast.</p>
                 <span className="text-sm font-bold text-[#EFBF04] group-hover:underline">Get Help Now</span>
